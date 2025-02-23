@@ -5,10 +5,10 @@
 pub struct TicketTitle(String);
 
 #[derive(thiserror::Error, Debug)]
-enum TicketTitleError{
+pub enum TicketTitleError{
     #[error("The title cannot be empty")]
     EmptyDescription,
-    #[error("The description cannot be longer than 50 bytes")]
+    #[error("The title cannot be longer than 50 bytes")]
     TooLongDescription,
 }
 
@@ -16,7 +16,7 @@ impl TryFrom<String> for TicketTitle {
     type Error = TicketTitleError;
     fn try_from(value: String) -> Result<Self, Self::Error> {
         match value {
-            value if value.len() > 500 => Err(TicketTitleError::TooLongDescription),
+            value if value.len() > 50 => Err(TicketTitleError::TooLongDescription),
             value if value.is_empty() => Err(TicketTitleError::EmptyDescription),
             _ => Ok(TicketTitle(value)),
         }
