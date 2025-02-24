@@ -58,6 +58,20 @@ impl TicketStore {
     }
 }
 
+impl std::ops::Index<TicketId> for TicketStore {
+    type Output = Ticket;
+    fn index(&self, index: TicketId) -> &Self::Output {
+        &self.tickets[index.0 as usize]
+    }
+}
+
+impl std::ops::Index<&TicketId> for TicketStore {
+    type Output = Ticket;
+    fn index(&self, index: &TicketId) -> &Self::Output {
+        &self.tickets[index.0 as usize] // can also use `&self[*index]` as `std::ops::Index<TicketId>` is implemented above
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{Status, TicketDraft, TicketStore};
