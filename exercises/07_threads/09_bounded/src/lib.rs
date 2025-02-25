@@ -14,7 +14,7 @@ pub struct TicketStoreClient {
 impl TicketStoreClient {
     pub fn insert(&self, draft: TicketDraft) -> Result<TicketId, RecvError> {
         let (response_channel, receiver) = sync_channel(1);
-        self.sender.try_send(Command::Insert { draft, response_channel }).unwrap();
+        self.sender.send(Command::Insert { draft, response_channel }).unwrap();
         receiver.recv()
         // the official solution takes a slightly different approach:
         // self.sender.try_send(Command::Insert { draft, response_channel }).map_err(|_| OverloadedError)?;
@@ -24,7 +24,7 @@ impl TicketStoreClient {
 
     pub fn get(&self, id: TicketId) -> Result<Option<Ticket>, RecvError> {
         let (response_channel, receiver) = sync_channel(1);
-        self.sender.try_send(Command::Get { id, response_channel }).unwrap();
+        self.sender.send(Command::Get { id, response_channel }).unwrap();
         receiver.recv()
     }
 }
