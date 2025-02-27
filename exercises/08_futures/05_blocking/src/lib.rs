@@ -11,8 +11,17 @@ pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
         let mut socket = socket.into_std()?;
         socket.set_nonblocking(false)?;
         let mut buffer = Vec::new();
-        socket.read_to_end(&mut buffer)?;
-        socket.write_all(&buffer)?;
+        tokio::task::spawn_blocking(move || -> Result<(), anyhow::Error> {
+            socket.read_to_end(&mut buffer)?;
+            socket.write_all(&buffer)?;
+            Ok(())
+        });
+        // if you add `.await??`, the function will wait for the blocking task to return
+        // a value before proceeding, meaning that it will not be ready to accept new
+        // incoming connections until the blocking task has finished
+
+        // more on `spawn_blocking` and `await`:
+        // https://users.rust-lang.org/t/tokio-calling-sync-operation-from-async-and-awaiting-still-blocks-the-thread/85990
     }
 }
 
