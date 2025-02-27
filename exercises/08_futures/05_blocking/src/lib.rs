@@ -18,7 +18,13 @@ pub async fn echo(listener: TcpListener) -> Result<(), anyhow::Error> {
         });
         // if you add `.await??`, the function will wait for the blocking task to return
         // a value before proceeding, meaning that it will not be ready to accept new
-        // incoming connections until the blocking task has finished
+        // incoming connections until the blocking task has finished.
+        
+        // this defeats a little bit the purpose of creating an expensive task that runs
+        // on its own, but sometimes the information coming from that task is needed
+        // by the parent task for further processing.
+        // if waiting that blocking task is a task which is not the main one, then,
+        // depending on the context, it might be totally fine.
 
         // more on `spawn_blocking` and `await`:
         // https://users.rust-lang.org/t/tokio-calling-sync-operation-from-async-and-awaiting-still-blocks-the-thread/85990
